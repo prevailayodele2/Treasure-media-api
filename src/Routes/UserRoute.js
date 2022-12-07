@@ -23,11 +23,12 @@ UserRoutes.post(
   body('username').isLength({ min: 4 }),
   async (req, res) => {
     const { username, email, password, profile, phonenumber } = req.body;
+    console.log(username, email, password, profile, phonenumber)
     try {
-      const error = validationResult(req);
-      if (!error.isEmpty()) {
-        return res.status(400).json('something went wrong');
-      }
+      // const error = validationResult(req);
+      // if (!error.isEmpty()) {
+      //   return res.status(400).json('something went wrong');
+      // }
       let user = await User.findOne({ email: email });
       if (user) {
         return res.status(200).json('user with email already exist');
