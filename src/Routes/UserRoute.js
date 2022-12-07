@@ -5,13 +5,22 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import verifyToken from './VerifyToken.js';
 import Post from '../Models/PostModel.js';
-import { generateOTP } from './Mail/mail.js';
+//import { generateOTP } from './Mail/mail.js';
 import VerifyToken from '../Models/VerificationToken.js';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import ResetToken from '../Models/ResetToken.js';
 
 const JWTSEC = '#2@!@$ndja45883 r7##';
+
+const generateOTP = () => {
+  let OTP = '';
+  for (let i = 0; i <= 3; i++) {
+    let ranVal = Math.round(Math.random() * 9);
+    OTP = OTP + ranVal;
+  }
+  return OTP;
+};
 
 const UserRoutes = express.Router();
 
@@ -23,62 +32,63 @@ UserRoutes.post(
   body('username').isLength({ min: 4 }),
   async (req, res) => {
     const { username, email, password, profile, phonenumber } = req.body;
-    console.log(username, email, password, profile, phonenumber)
     try {
-      // const error = validationResult(req);
-      // if (!error.isEmpty()) {
-      //   return res.status(400).json('something went wrong');
-      // }
-      let user = await User.findOne({ email: email });
+      const error = validationResult(req);
+      if (!error.isEmpty()) {
+        return res.status(400).json('something went wrong');
+      }
+      const user = await User.findOne({ email: email });
       if (user) {
         return res.status(200).json('user with email already exist');
       }
       const salt = await bcrypt.genSalt(12);
       const hashedPassword = await bcrypt.hash(password, salt);
-      user = await User.create({
+      const createdUser =  await User.create({
         username: username,
         email: email,
         password: hashedPassword,
         profile: profile,
         phonenumber: phonenumber,
       });
-      const accessToken = jwt.sign(
-        {
-          id: user?._id,
-          username: user?.username,
-        },
-        JWTSEC
-      );
+      // const accessToken = jwt.sign(
+      //   {
+      //     id: user?._id,
+      //     username: user?.username,
+      //   },
+      //   JWTSEC
+      // );
+      await createdUser.save();
       const OTP = generateOTP();
-      const verificationToken = await VerifyToken.create({
-        user: user._id,
-        token: OTP,
-      });
-      verificationToken.save();
-      await user.save();
+      try {
+        const verificationToken = await VerifyToken.create({
+          user: createdUser?._id,
+          token: OTP,
+        });
+        await verificationToken.save();
+      } catch (error) {
+        res.status(400).json(error)
+      }
       var transport = nodemailer.createTransport({
         host: 'smtp.mailtrap.io',
         port: 2525,
         auth: {
-          user: process.env.MAILUSER,
-          pass: process.env.MAILPASSWORD,
+          user: '8f4fcb3aae977e',
+          pass: 'f79d430112c18c',
         },
       });
-      transport.sendMail({
+      await transport.sendMail({
         from: 'Treasure-media@gmail.com',
-        to: user.email,
+        to: createdUser?.email,
         subject: 'Verify your email using OTP',
         html: `<h1>Your OTP is ${OTP}</h1>`,
       });
       res.status(200).json({
         status: 'Pending',
         msg: 'Please check you email',
-        user: user._id,
+        user: createdUser?._id,
       });
     } catch (error) {
-      res
-        .status(500)
-        .json(error);
+      res.status(500).json(error);
     }
   }
 );

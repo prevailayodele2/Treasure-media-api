@@ -7,7 +7,7 @@ import cors from 'cors'
 
 dotenv.config()
 
-const MONGODBURL = "mongodb+srv://treasure-media:oluwatominsin@cluster0.fz6l17o.mongodb.net/treasure-media?retryWrites=true&w=majority"
+const MONGODBURL = "mongodb+srv://socialTreasure:oluwatominsin@cluster0.rng6kxn.mongodb.net/socialData?retryWrites=true&w=majority"
 mongoose.connect(MONGODBURL).then(()=>{
     console.log('MongoDB Connected so start working')
 }).catch((err)=>{
