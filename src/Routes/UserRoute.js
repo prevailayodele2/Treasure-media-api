@@ -23,7 +23,7 @@ UserRoutes.post(
   body('username').isLength({ min: 4 }),
   async (req, res) => {
     const { username, email, password, profile, phonenumber } = req.body;
-    //try {
+    try {
       const error = validationResult(req);
       if (!error.isEmpty()) {
         return res.status(400).json('something went wrong');
@@ -74,11 +74,11 @@ UserRoutes.post(
         msg: 'Please check you email',
         user: user._id,
       });
-    // } catch (error) {
-    //   res
-    //     .status(500)
-    //     .json({ error: 'something went wrong creating this user' });
-    // }
+    } catch (error) {
+      res
+        .status(500)
+        .json(error);
+    }
   }
 );
 
