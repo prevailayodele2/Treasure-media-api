@@ -6,8 +6,9 @@ import PostRoute from './Routes/post.js'
 import cors from 'cors'
 
 dotenv.config()
+const MONGODBURI = "mongodb+srv://treasure-media:oluwatominsin@cluster0.fz6l17o.mongodb.net/Treasure-media?retryWrites=true&w=majority"
 
-mongoose.connect(process.env.MONGODBURI).then(()=>{
+mongoose.connect(MONGODBURI).then(()=>{
     console.log('MongoDB Connected so start working')
 }).catch((err)=>{
     console.log({err: 'MongoDB doing me somehow bayhi'})
