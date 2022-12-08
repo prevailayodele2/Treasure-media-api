@@ -50,13 +50,13 @@ UserRoutes.post(
         profile: profile,
         phonenumber: phonenumber,
       });
-      // const accessToken = jwt.sign(
-      //   {
-      //     id: user?._id,
-      //     username: user?.username,
-      //   },
-      //   JWTSEC
-      // );
+      const accessToken = jwt.sign(
+        {
+          id: user?._id,
+          username: user?.username,
+        },
+        JWTSEC
+      );
       await createdUser.save();
       const OTP = generateOTP();
       try {
