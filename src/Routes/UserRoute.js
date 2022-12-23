@@ -173,7 +173,7 @@ UserRoutes.post('/forgetpassword', async (req, res) => {
     from: 'Treasure-media@gmail.com',
     to: user.email,
     subject: 'Reset Token',
-    html: `<a href='http://localhost:3000/reset/password?token=${RandomTxt}&_id=${user._id}'> Click here to reset your password</a>`,
+    html: `<a href='https://treasure-media.onrender.com/reset/password?token=${RandomTxt}&_id=${user._id}'> Click here to reset your password</a>`,
   });
 
   return res.status(200).json('Check your email to reset password');
